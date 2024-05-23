@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  graphweave:
+    image: 'graphweave:latest'
+    build:
+      context: .
+    container_name: graphweave
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_USER=$DB_USERNAME
+      - POSTGRES_PASSWORD=DB_PASSWORD
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/$DB_NAME
+      - SPRING_DATASOURCE_USERNAME=$DB_USERNAME
+      - SPRING_DATASOURCE_PASSWORD=DB_PASSWORD
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+    env_file:
+      - .env
+    ports:
+      - "${GRAPHWEAVE_PORT}:8080"
+    networks:
+      - backend
+
+  db:
+    image: postgres
+    container_name: graphweave-db
+    environment:
+      - POSTGRES_USER=$DB_USERNAME
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_DB=$DB_NAME
+
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    networks:
+      - backend
+
+  pgadmin:
+    links:
+      - db:graphweave-db
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    env_file:
+      - .env
+    ports:
+      - "${PGADMIN_PORT}:80"
+    volumes:
+      - /data/pgadmin:/root/.pgadmin
+
+networks:
+  backend:
+    driver: bridge
