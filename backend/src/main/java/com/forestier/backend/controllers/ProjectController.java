@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/api/projects")
 public class ProjectController {
     @Autowired
     private ProjectService projectService;
@@ -20,12 +21,12 @@ public class ProjectController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @GetMapping("api/projects/{projectId}")
+    @GetMapping("{projectId}")
     public ProjectDto getProject(@PathVariable UUID projectId, @RequestHeader("Authorization") String token) {
         return convertToDto(projectService.getProject(projectId, JwtHelper.getUserFromToken(token)));
     }
 
-    @GetMapping("api/projects/all")
+    @GetMapping("")
     public List<ProjectDto> getProjects(@RequestHeader("Authorization") String token) {
         try {
             return projectService.allProjectsFromUser(JwtHelper.getUserFromToken(token)).stream().map(this::convertToDto).toList();
@@ -36,19 +37,19 @@ public class ProjectController {
 
     }
 
-    @PostMapping("/api/projects")
+    @PostMapping("")
     public ProjectDto createProject(@RequestBody ProjectDto dto, @RequestHeader("Authorization") String token) {
         Project project = convertToEntity(dto);
         return convertToDto(projectService.saveProject(project, JwtHelper.getUserFromToken(token)));
     }
 
-    @DeleteMapping("/api/projects/{projectId}")
+    @DeleteMapping("{projectId}")
     public void deleteProject(@PathVariable UUID projectId, @RequestHeader("Authorization") String token) {
 
         projectService.deleteProject(projectId, JwtHelper.getUserFromToken(token));
     }
 
-    @PutMapping("/api/projects")
+    @PutMapping("")
     public ProjectDto updateProject(@RequestBody ProjectDto dto, @RequestHeader("Authorization") String token) {
         if (dto.getId() == null)
             throw new IllegalArgumentException("Project id is required");

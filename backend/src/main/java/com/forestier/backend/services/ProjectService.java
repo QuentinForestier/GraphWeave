@@ -32,8 +32,8 @@ public class ProjectService {
     public Project saveProject(Project project, User user) {
         if (project.getId() == null) {
             // Create new project
-            Project proj = createNewProject(project, user);
-            return projectRepository.save(proj);
+            return createNewProject(project, user);
+
         } else {
             // Update existing project
             Collaborator collaborator = collaboratorService.getCollaborator(project.getId(), user.getId());
@@ -53,18 +53,21 @@ public class ProjectService {
     }
 
     public Project getProject(UUID projectId, User user) {
-        return collaboratorService.getCollaborator(projectId, user.getId()).getProject();
+        Collaborator c = collaboratorService.getCollaborator(projectId, user.getId());
+        if (c == null)
+            throw new IllegalArgumentException("User is not a collaborator of the project");
+        return c.getProject();
     }
 
     private Project createNewProject(Project project, User user) {
 
         Project proj = new Project();
         proj.setName(project.getName());
-        proj.setCollaborators(new ArrayList(){
-            {
-                add(collaboratorService.createNewCollaborator(project.getId(), user.getId(), true, true));
-            }
-        });
+        proj.setCollaborators(new ArrayList<>());
+
+        proj = projectRepository.save(proj);
+        Collaborator collaborator = collaboratorService.createNewCollaborator(proj, user, true, true);
+        proj.getCollaborators().add(collaborator);
         return proj;
     }
 

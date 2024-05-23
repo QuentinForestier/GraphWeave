@@ -1,2 +1,2 @@
 # GraphWeave
-A collaborative UML editor
+Collaborative UML editor 

@@ -2,6 +2,8 @@ package com.forestier.backend.services;
 
 import com.forestier.backend.models.Collaborator;
 import com.forestier.backend.models.CollaboratorId;
+import com.forestier.backend.models.Project;
+import com.forestier.backend.models.User;
 import com.forestier.backend.repositories.CollaboratorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ public class CollaboratorService {
 
     @Autowired
     private CollaboratorRepository collaboratorRepository;
+
 
     public Collaborator saveCollaborator(Collaborator collaborator) {
         return collaboratorRepository.save(collaborator);
@@ -35,12 +38,13 @@ public class CollaboratorService {
         return collaboratorRepository.findByUserId(userId);
     }
 
-    Collaborator createNewCollaborator(UUID projectId, UUID userId, boolean isOwner, boolean canWrite) {
+    Collaborator createNewCollaborator(Project p, User u, boolean isOwner, boolean canWrite) {
         Collaborator collaborator = new Collaborator();
-        collaborator.setId(new CollaboratorId(projectId, userId));
+        collaborator.setId(new CollaboratorId(u.getId(), p.getId()));
+        collaborator.setUser(u);
+        collaborator.setProject(p);
         collaborator.setOwner(isOwner);
         collaborator.setCanWrite(canWrite);
         return collaboratorRepository.save(collaborator);
-
     }
 }
