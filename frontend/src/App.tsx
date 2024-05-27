@@ -14,12 +14,10 @@ import {Router} from './Router';
 import {theme} from './theme';
 import {useDisclosure, useViewportSize} from "@mantine/hooks";
 import {Header} from './components/Header/Header';
-import graphWeaveLogo from './logo.svg'
-import {AuthForm} from "@/components/AuthForm/AuthForm";
-import {ColorSchemeToggle} from "@/components/ColorSchemeToggle/ColorSchemeToggle";
-import {AuthButton} from "@/components/AuthToggle/AuthButton";
 import {SearchAddInput} from "@/components/SearchAddInput/SearchAddInput";
 import {ProjectItem} from "@/components/ProjectItem/ProjectItem";
+import {Notifications} from "@mantine/notifications";
+import {ModalsProvider} from "@mantine/modals";
 
 
 export default function App() {
@@ -29,58 +27,46 @@ export default function App() {
 
     return (
         <MantineProvider theme={theme}>
-            <AppShell
+            <ModalsProvider>
+                <Notifications/>
+                <AppShell
 
-                padding={{base: 10, sm: 15, lg: 'xl'}}
-                header={
-                    {height: {base: 65, sm: 78, lg: 90}}}
-                aside={{
-                    width: {sm: 250, lg: 300},
-                    breakpoint: 'sm',
-                    collapsed: {mobile: !openedAside, desktop: !openedAside}
-                }}
-            >
-                <AppShell.Header
-                    withBorder={false}>
+                    padding={{base: 10, sm: 15, lg: 'xl'}}
+                    header={
+                        {height: {base: 65, sm: 78, lg: 90}}}
+                    aside={{
+                        width: {sm: 250, lg: 300},
+                        breakpoint: 'sm',
+                        collapsed: {mobile: !openedAside, desktop: !openedAside}
+                    }}
+                >
+                    <AppShell.Header
+                        withBorder={false}>
 
-                    <Header openedAside={openedAside} onAsideToggle={toggle}/>
-                </AppShell.Header>
-                <AppShell.Aside
-                    withBorder={true}>
-                    <AppShell.Section
-                        p={"sm"}>
-                        <SearchAddInput/>
-                    </AppShell.Section>
-                    <AppShell.Section
-                        grow
-                        p={"sm"}>
-                        <List
-                            withPadding
-                            spacing={"md"}
-                            size={"md"}
-                            center>
+                        <Header openedAside={openedAside} onAsideToggle={toggle}/>
+                    </AppShell.Header>
+                    <AppShell.Aside
+                        withBorder={true}>
+                        <AppShell.Section
+                            p={"sm"}>
+                            <SearchAddInput/>
+                        </AppShell.Section>
+                        <AppShell.Section
+                            grow
+                            p={"sm"}>
                             <ScrollArea.Autosize mah={"80vh"} type={"hover"}>
+                                <ProjectItem canEdit={false} isOwner={true}/>
                                 <ProjectItem canEdit={false}/>
                                 <ProjectItem canEdit={true}/>
-                                <ProjectItem canEdit={true}/>
-                                <ProjectItem canEdit={true}/>
-                                <ProjectItem canEdit={true}/>
-                                <ProjectItem canEdit={true}/>
-                                <ProjectItem canEdit={true}/>
-                                <ProjectItem canEdit={true}/>
-                                <ProjectItem canEdit={true}/>
-                                <ProjectItem canEdit={true}/>
-                                <ProjectItem canEdit={true}/>
-                                <ProjectItem canEdit={false}/>
-
                             </ScrollArea.Autosize>
-                        </List>
-                    </AppShell.Section>
-                </AppShell.Aside>
-                <AppShell.Main>
-                    <Router/>
-                </AppShell.Main>
-            </AppShell>
+                        </AppShell.Section>
+                    </AppShell.Aside>
+                    <AppShell.Main>
+
+                        <Router/>
+                    </AppShell.Main>
+                </AppShell>
+            </ModalsProvider>
         </MantineProvider>
     );
 }

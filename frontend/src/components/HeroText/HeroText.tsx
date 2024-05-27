@@ -1,6 +1,7 @@
 import { Title, Text, Button, Container } from '@mantine/core';
 import { Dots } from '../Dots/Dots';
 import classes from './HeroText.module.css';
+import {notifications} from "@mantine/notifications";
 
 export function HeroText() {
     return (
@@ -27,7 +28,10 @@ export function HeroText() {
 
                 <div className={classes.controls}>
 
-                    <Button variant={"outline"}   className={classes.control} size="lg">
+                    <Button variant={"outline"} onClick={() => notifications.show({
+                        title:"Notification title",
+                        message:"Notification message",
+                    })}   className={classes.control} size="lg">
                         Start Now !
                     </Button>
                 </div>
