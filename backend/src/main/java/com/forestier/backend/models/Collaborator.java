@@ -1,7 +1,6 @@
 package com.forestier.backend.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,14 +26,14 @@ public class Collaborator {
     private boolean isOwner;
 
     @Column(nullable = false)
-    private boolean canWrite;
+    private boolean canEdit;
 
-    public Collaborator(User user, Project project, boolean isOwner, boolean canWrite)
+    public Collaborator(User user, Project project, boolean isOwner, boolean canEdit)
     {
         this.user = user;
         this.project = project;
         this.isOwner = isOwner;
-        this.canWrite = canWrite;
+        this.canEdit = canEdit;
     }
 
 

@@ -40,7 +40,10 @@ public class ProjectService {
             if (!collaborator.isOwner())
                 throw new IllegalArgumentException("User is not the owner of the project");
 
-            return projectRepository.save(project);
+            // Avoid updating the collaborators. Not the best way to do it, but it works for now
+            Project p = projectRepository.findById(project.getId()).orElseThrow();
+            p.setName(project.getName());
+            return projectRepository.save(p);
         }
     }
 

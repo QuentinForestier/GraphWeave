@@ -2,9 +2,13 @@ import {ColorSchemeToggle} from '@/components/ColorSchemeToggle/ColorSchemeToggl
 import {HeroText} from "@/components/HeroText/HeroText";
 import graphWeaveLogo from "@/logo.svg";
 import {AspectRatio, Center, ScrollArea, Space, Stack} from "@mantine/core";
-import {useViewportSize} from "@mantine/hooks";
+import {modals} from "@mantine/modals";
 
-export function HomePage() {
+type HomePageProps ={
+    toggle: () => void
+}
+
+export function HomePage({toggle}:HomePageProps) {
 
 
     return (
@@ -17,7 +21,7 @@ export function HomePage() {
                     <AspectRatio maw={300} style={{margin: "auto"}}>
                         <img src={graphWeaveLogo} alt={"Logo"}/>
                     </AspectRatio>
-                    <HeroText/>
+                    <HeroText toggle={toggle}/>
                 </Stack>
             </Center>
         </>

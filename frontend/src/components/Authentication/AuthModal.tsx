@@ -11,14 +11,18 @@ import {
     Anchor,
     Stack,
 } from '@mantine/core';
+import {notifications} from "@mantine/notifications";
+import {modals} from "@mantine/modals";
+import {useAuth} from "@/hooks/useAuth";
+import {useProjects} from "@/hooks/useProjects";
 
 
-export function AuthForm(props: PaperProps) {
+export function AuthModal(props: PaperProps) {
     const [type, toggle] = useToggle(['login', 'register']);
     const form = useForm({
         initialValues: {
             email: '',
-            name: '',
+            username: '',
             password: '',
             confirmPassword: '',
 
@@ -26,9 +30,12 @@ export function AuthForm(props: PaperProps) {
 
         validate: {
             email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
-            password: (val) => (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(val) ? 'Password must be 8 characters, at least one digit, one lowercase, one uppercase, one special character' : null),
+            password: (val) => (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(val) ? null : 'Password must be 8 characters, at least one digit, one lowercase, one uppercase, one special character'),
         },
     });
+
+    const {login, register, authenticatedUser} = useAuth();
+
 
     return (
         <Paper radius="md" p="xl" withBorder {...props}>
@@ -44,14 +51,44 @@ export function AuthForm(props: PaperProps) {
             <Divider label="Or continue with email" labelPosition="center" my="lg" />
 */}
             <form onSubmit={form.onSubmit(() => {
+
+                if (type === 'register') {
+                    register({
+                        email: form.values.email,
+                        username: form.values.username,
+                        password: form.values.password,
+                        confirmPassword: form.values.confirmPassword,
+                    }).then((response) => {
+                            setTimeout(() => {
+                                notifications.show({
+                                    title: "Welcome to GraphWeave !",
+                                    message: "You successfully signed up. Welcome on board " + response.username,
+                                })
+                            }, 100);
+                        }
+                    )
+                } else {
+                    login({
+                        email: form.values.email,
+                        password: form.values.password,
+                    }).then((response) => {
+
+                        notifications.show({
+                            title: "Welcome back !",
+                            message: "We are happy to see you again, " + response.username,
+                        })
+                    });
+                }
+                modals.closeAll();
             })}>
                 <Stack>
                     {type === 'register' && (
                         <TextInput
-                            label="Name"
-                            placeholder="Your name"
-                            value={form.values.name}
-                            onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
+                            required
+                            label="Username"
+                            placeholder="Your username"
+                            value={form.values.username}
+                            onChange={(event) => form.setFieldValue('username', event.currentTarget.value)}
                             radius="md"
                         />
                     )}
@@ -59,7 +96,7 @@ export function AuthForm(props: PaperProps) {
                     <TextInput
                         required
                         label="Email"
-                        placeholder="hello@mantine.dev"
+                        placeholder="hello@graphweave.ch"
                         value={form.values.email}
                         onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
                         error={form.errors.email && 'Invalid email'}
@@ -99,7 +136,7 @@ export function AuthForm(props: PaperProps) {
                 <Group justify="space-between" mt="xl">
                     <Anchor component="button" type="button" c="dimmed" onClick={() => toggle()} size="xs">
                         {type === 'register'
-                            ? 'Already have an account? AuthForm'
+                            ? 'Already have an account? Login'
                             : "Don't have an account? Register"}
                     </Anchor>
                     <Button type="submit" radius="xl">

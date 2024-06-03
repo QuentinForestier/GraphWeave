@@ -8,11 +8,12 @@ import {
 } from "@mantine/core";
 import {useDisclosure} from "@mantine/hooks";
 import graphWeaveLogo from '../../logo.svg'
-import {AuthForm} from "@/components/AuthForm/AuthForm";
+import {AuthModal} from "@/components/Authentication/AuthModal";
 import {ColorSchemeToggle} from "@/components/ColorSchemeToggle/ColorSchemeToggle";
-import {AuthButton} from "@/components/AuthToggle/AuthButton";
+import {AuthButton} from "@/components/Authentication/AuthButton";
 import {MouseEventHandler} from "react";
 import {modals} from "@mantine/modals";
+import {useAuth} from "@/hooks/useAuth";
 
 interface HeaderProps {
     onAsideToggle?: MouseEventHandler<HTMLButtonElement>
@@ -24,8 +25,7 @@ const defaultProps: Partial<HeaderProps> = {
 };
 
 export function Header(props: HeaderProps) {
-    let username = "Quentin";
-    let connected = false;
+    const {authenticatedUser} = useAuth();
 
     return (
         <>
@@ -40,17 +40,11 @@ export function Header(props: HeaderProps) {
 
 
                 <Group pr={"xs"} mah={"var(--app-shell-header-height, px)"} h="100%">
-                    <Title visibleFrom={"md"} order={4}>Hello, {username} !</Title>
+
+                    <Title hidden={authenticatedUser === null} visibleFrom={"md"} order={4}>Hello, {authenticatedUser?.username} !</Title>
                     <ColorSchemeToggle/>
-                    <AuthButton onToggle={() => {
-                        modals.open({
-                            title: 'GraphWeave Authentication',
-                            children: (
-                                <AuthForm/>
-                            )
-                        })
-                    }} auth={connected}/>
-                    <Burger opened={props.openedAside} onClick={props.onAsideToggle}/>
+                    <AuthButton />
+                    <Burger hidden={authenticatedUser === null} opened={props.openedAside} onClick={props.onAsideToggle}/>
                 </Group>
             </Group>
         </>

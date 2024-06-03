@@ -1,72 +1,51 @@
 import '@mantine/core/styles.css';
 import {
     AppShell,
-    AspectRatio,
-    Burger, Button, Center,
-    Combobox, Divider, Drawer,
-    Group, Image, List,
+    Divider,
     MantineProvider,
-    Modal, ScrollArea, Text,
-    Title,
-    UnstyledButton
+    ScrollArea,
 } from '@mantine/core';
-import {Router} from './Router';
 import {theme} from './theme';
 import {useDisclosure, useViewportSize} from "@mantine/hooks";
 import {Header} from './components/Header/Header';
 import {SearchAddInput} from "@/components/SearchAddInput/SearchAddInput";
-import {ProjectItem} from "@/components/ProjectItem/ProjectItem";
+import {ProjectListItem} from "@/components/Projects/ProjectListItem";
 import {Notifications} from "@mantine/notifications";
-import {ModalsProvider} from "@mantine/modals";
+import {modals, ModalsProvider} from "@mantine/modals";
+import {ProjectModal} from "@/components/Projects/ProjectModal";
+
+import Routes from "@/routes";
+import {AuthProvider} from "@/contexts/AuthContext";
+import {ProjectList} from "@/components/Projects/ProjectList";
+import {ProjectsProvider} from "@/contexts/ProjectsContext";
 
 
 export default function App() {
-    const [openedAside, {toggle}] = useDisclosure(false);
-
-    let username = "Quentin";
+    const [opened, {toggle}] = useDisclosure(false);
 
     return (
         <MantineProvider theme={theme}>
-            <ModalsProvider>
-                <Notifications/>
-                <AppShell
-
-                    padding={{base: 10, sm: 15, lg: 'xl'}}
-                    header={
-                        {height: {base: 65, sm: 78, lg: 90}}}
-                    aside={{
-                        width: {sm: 250, lg: 300},
-                        breakpoint: 'sm',
-                        collapsed: {mobile: !openedAside, desktop: !openedAside}
-                    }}
-                >
-                    <AppShell.Header
-                        withBorder={false}>
-
-                        <Header openedAside={openedAside} onAsideToggle={toggle}/>
-                    </AppShell.Header>
-                    <AppShell.Aside
-                        withBorder={true}>
-                        <AppShell.Section
-                            p={"sm"}>
-                            <SearchAddInput/>
-                        </AppShell.Section>
-                        <AppShell.Section
-                            grow
-                            p={"sm"}>
-                            <ScrollArea.Autosize mah={"80vh"} type={"hover"}>
-                                <ProjectItem canEdit={false} isOwner={true}/>
-                                <ProjectItem canEdit={false}/>
-                                <ProjectItem canEdit={true}/>
-                            </ScrollArea.Autosize>
-                        </AppShell.Section>
-                    </AppShell.Aside>
-                    <AppShell.Main>
-
-                        <Router/>
-                    </AppShell.Main>
-                </AppShell>
-            </ModalsProvider>
+            <AuthProvider>
+                <ProjectsProvider>
+                    <ModalsProvider>
+                        <Notifications/>
+                        <ProjectList opened={opened} toggle={toggle}/>
+                        <AppShell
+                            padding={{base: 10, sm: 15, lg: 'xl'}}
+                            header={
+                                {height: {base: 65, sm: 78, lg: 90}}}
+                        >
+                            <AppShell.Header
+                                withBorder={false}>
+                                <Header openedAside={opened} onAsideToggle={toggle}/>
+                            </AppShell.Header>
+                            <AppShell.Main>
+                                <Routes toggle={toggle}/>
+                            </AppShell.Main>
+                        </AppShell>
+                    </ModalsProvider>
+                </ProjectsProvider>
+            </AuthProvider>
         </MantineProvider>
     );
 }

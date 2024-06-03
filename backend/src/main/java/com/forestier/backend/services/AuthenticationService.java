@@ -1,5 +1,7 @@
 package com.forestier.backend.services;
 
+import com.forestier.backend.dto.authentication.LoginResponse;
+import com.forestier.backend.dto.models.UserDto;
 import com.forestier.backend.helper.JwtHelper;
 import com.forestier.backend.dto.authentication.LoginRequest;
 import com.forestier.backend.dto.authentication.SignupRequest;
@@ -43,10 +45,12 @@ public class AuthenticationService {
         return userService.saveUser(user);
     }
 
-    public String login(LoginRequest dto) {
+    public LoginResponse login(LoginRequest dto) {
         var auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
         if(auth.isAuthenticated()) {
-            return JwtHelper.generateToken(userService.convertToDto(userService.getUserByEmail(dto.getEmail())));
+            UserDto userDto = userService.convertToDto(userService.getUserByEmail(dto.getEmail()));
+            String token = JwtHelper.generateToken(userDto);
+            return new LoginResponse(userDto, token);
         }
         throw new IllegalArgumentException("Invalid credentials");
     }

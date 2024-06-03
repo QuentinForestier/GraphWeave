@@ -32,7 +32,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest dto) {
-        return new LoginResponse(dto.getEmail(), authenticationService.login(dto));
+        return authenticationService.login(dto);
     }
 
 
