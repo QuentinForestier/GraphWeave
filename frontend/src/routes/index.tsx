@@ -30,7 +30,7 @@ const Routes = ({toggle}:RoutesType) => {
             element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
             children: [
                 {
-                    path: "/projects",
+                    path: "/projects/:id",
                     element: <ProjectPage />,
                 },
             ],

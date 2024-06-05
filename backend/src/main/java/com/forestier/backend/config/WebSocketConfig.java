@@ -37,13 +37,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic", "/queue");
         config.setApplicationDestinationPrefixes("/app");
+        config.enableSimpleBroker("/topic");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws")
+        //registry.addEndpoint("/ws").setAllowedOrigins("*");
+        registry.addEndpoint("/ws").setAllowedOrigins("*")
                 .setHandshakeHandler(new DefaultHandshakeHandler() {
                     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map attributes) throws Exception {
                         if (request instanceof ServletServerHttpRequest) {
@@ -74,9 +75,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     // get token in authentication header from accessor
                     String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
                     assert authorizationHeader != null;
-                    String token = authorizationHeader.substring(7);
                     // get user from token
-                    User user = JwtHelper.getUserFromToken(token);
+                    User user = JwtHelper.getUserFromToken(authorizationHeader);
                     UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

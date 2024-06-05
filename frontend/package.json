@@ -24,12 +24,14 @@
     "@mantine/hooks": "^7.10.0",
     "@mantine/modals": "^7.10.0",
     "@mantine/notifications": "^7.10.0",
+    "@stomp/stompjs": "^7.0.0",
     "@tabler/core": "1.0.0-beta20",
     "@tabler/icons-react": "^3.5.0",
     "axios": "^1.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.3"
+    "react-router-dom": "^6.22.3",
+    "usestomp-hook": "^2.0.0"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.1.3",

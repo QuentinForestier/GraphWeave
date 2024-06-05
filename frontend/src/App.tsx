@@ -18,10 +18,13 @@ import Routes from "@/routes";
 import {AuthProvider} from "@/contexts/AuthContext";
 import {ProjectList} from "@/components/Projects/ProjectList";
 import {ProjectsProvider} from "@/contexts/ProjectsContext";
+import {Client} from "@stomp/stompjs";
+import {StompProvider} from "usestomp-hook/lib";
 
 
 export default function App() {
     const [opened, {toggle}] = useDisclosure(false);
+
 
     return (
         <MantineProvider theme={theme}>

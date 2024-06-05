@@ -33,7 +33,7 @@ export function ProjectListItem({project}: ProjectListItemProps) {
     return (<>
 
             <NavLink
-                href={"/projects"}
+                href={"/projects/" + project?.id}
                 label={<Text ml={"sm"}>{project?.name}</Text>}
                 leftSection={
                     (collaborator?.owner && <IconCrown/>) || (collaborator?.canEdit &&
