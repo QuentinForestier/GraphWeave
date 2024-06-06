@@ -3,6 +3,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import {HomePage} from "@/pages/Home.page";
 import {ProjectPage} from "@/pages/Project.page";
 import {useAuth} from "@/hooks/useAuth";
+import {Editor} from "@/components/Editor/Editor";
 
 type RoutesType = {
     toggle: () => void
@@ -21,6 +22,10 @@ const Routes = ({toggle}:RoutesType) => {
             path: "/login",
             element: <HomePage toggle={toggle}/>,
         },
+        {
+            path: '/editor',
+            element: <Editor />
+        }
     ];
 
     // Define routes accessible only to authenticated users
