@@ -1,8 +1,9 @@
 package com.forestier.backend.controllers;
 
-import com.forestier.backend.dto.models.CollaboratorDto;
-import com.forestier.backend.dto.models.CollaboratorEmailDto;
+import com.forestier.backend.dto.CollaboratorDto;
+import com.forestier.backend.dto.CollaboratorEmailDto;
 import com.forestier.backend.helper.JwtHelper;
+import com.forestier.backend.helper.ModelConversionHelper;
 import com.forestier.backend.models.Collaborator;
 import com.forestier.backend.models.CollaboratorId;
 import com.forestier.backend.services.CollaboratorService;
@@ -19,11 +20,11 @@ public class CollaboratorController {
     private CollaboratorService collaboratorService;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private ModelConversionHelper modelConversionHelper;
 
     @PostMapping("project/{projectId}")
     public CollaboratorDto addCollaboratorToProject(@RequestBody CollaboratorEmailDto dto, @PathVariable UUID projectId, @RequestHeader("Authorization") String token) {
-        return convertToDto(collaboratorService.createCollaborator(dto.getEmail(), projectId, JwtHelper.getUserFromToken(token)));
+        return modelConversionHelper.toCollaboratorDto(collaboratorService.createCollaborator(dto.getEmail(), projectId, JwtHelper.getUserFromToken(token)));
     }
 
     @DeleteMapping("project/{projectId}/user/{userId}")
@@ -33,17 +34,10 @@ public class CollaboratorController {
 
     @PutMapping("project/{projectId}")
     public CollaboratorDto updateCollaboratorOfProject(@RequestBody CollaboratorDto dto, @RequestHeader("Authorization") String token, @PathVariable String projectId) {
-        Collaborator c = convertToEntity(dto);
+        Collaborator c = modelConversionHelper.toCollaborator(dto);
         c.setId(new CollaboratorId(UUID.fromString(projectId), dto.getUser().getId()));
-        return convertToDto(collaboratorService.updateCollaborator(c, JwtHelper.getUserFromToken(token)));
+        return modelConversionHelper.toCollaboratorDto(collaboratorService.updateCollaborator(c, JwtHelper.getUserFromToken(token)));
     }
 
-    private CollaboratorDto convertToDto(Collaborator collaborator) {
-        return modelMapper.map(collaborator, CollaboratorDto.class);
-    }
 
-    private Collaborator convertToEntity(CollaboratorDto dto){
-        //TODO: Do something when id already exists
-        return modelMapper.map(dto, Collaborator.class);
-    }
 }

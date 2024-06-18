@@ -1,6 +1,6 @@
 package com.forestier.backend.helper;
 
-import com.forestier.backend.dto.models.UserDto;
+import com.forestier.backend.dto.UserDto;
 import com.forestier.backend.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

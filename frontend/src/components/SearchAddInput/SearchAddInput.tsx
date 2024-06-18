@@ -3,13 +3,13 @@ import {IconSearch,  IconPlus} from '@tabler/icons-react';
 import React, {MouseEventHandler} from "react";
 
 interface SearchAddInputProps extends TextInputProps {
-    onAddClick?: MouseEventHandler<HTMLButtonElement>
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+    onButtonClick?: MouseEventHandler<HTMLButtonElement>
+    onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const defaultProps: Partial<SearchAddInputProps> = {
-    onAddClick: undefined,
-    onChange: undefined,
+    onButtonClick: undefined,
+    onInputChange: undefined,
 }
 
 export function SearchAddInput(props: SearchAddInputProps) {
@@ -20,12 +20,12 @@ export function SearchAddInput(props: SearchAddInputProps) {
             value={props.value}
             radius="md"
             size="md"
-            onChange={props.onChange}
+            onChange={props.onInputChange}
             placeholder={props.placeholder}
             rightSectionWidth={42}
             leftSection={<IconSearch style={{ width: rem(18), height: rem(18) }} stroke={1.5} />}
             rightSection={
-                <ActionIcon onClick={props.onAddClick} size={32} radius="xl"  variant="filled">
+                <ActionIcon onClick={props.onButtonClick} size={32} radius="xl" variant="filled">
                     <IconPlus style={{ width: rem(18), height: rem(18) }} stroke={1.5} />
                 </ActionIcon>
             }

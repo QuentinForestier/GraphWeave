@@ -1,24 +1,42 @@
 package com.forestier.backend.controllers;
 
-import com.forestier.backend.dto.ChatMessage;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.forestier.backend.models.ChatMessage;
 import com.forestier.backend.services.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AppController {
 
+
     @Autowired
-    private AppService webSocketService;
+    private AppService appService;
 
-    @MessageMapping("/projects/{projectId}")
+
+    @MessageMapping("projects/{projectId}/chat/send")
     public void send(@Payload ChatMessage message, @Header("Authorization") String token, @DestinationVariable String projectId) throws Exception {
-        webSocketService.handleProjectMessage(message, projectId, token);
-
+        appService.handleChatMessage(message, projectId, token);
     }
+
+    @MessageMapping("projects/{projectId}/uml/create/entity/{entityType}")
+    public void createEntity(@Payload JsonNode entityDto, @Header("Authorization") String token, @DestinationVariable String projectId, @DestinationVariable String entityType) throws Exception {
+        appService.handleCreateEntity(entityDto, entityType, projectId, token);
+    }
+
+    @MessageMapping("uml/update/entity/{entityType}")
+    public void updateEntity(@Payload JsonNode entityDto, @Header("Authorization") String token, @DestinationVariable String projectId, @PathVariable String entityType) throws Exception {
+        appService.handleUpdateEntity(entityDto, entityType, projectId, token);
+    }
+
+    @MessageMapping("uml/delete/entity/{entityType}")
+    public void deleteEntity(@Payload JsonNode entityDto, @Header("Authorization") String token, @DestinationVariable String projectId, @PathVariable String entityType) throws Exception {
+        appService.handleDeleteEntity(entityDto, entityType, projectId, token);
+    }
+
 }

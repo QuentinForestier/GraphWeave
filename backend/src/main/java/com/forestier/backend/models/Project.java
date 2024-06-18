@@ -1,6 +1,6 @@
 package com.forestier.backend.models;
 
-import com.forestier.backend.uml.ClassDiagram;
+import com.forestier.backend.models.uml.ClassDiagram;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +24,7 @@ public class Project {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Collaborator> collaborators;
 
     @Transient

@@ -12,6 +12,7 @@ import 'reactflow/dist/style.css';
 import {EditorToolbar} from "./EditorToolbar";
 import { v4 as uuidv4 } from 'uuid';
 
+
 const initialNodes = [
     {
         id: '1',

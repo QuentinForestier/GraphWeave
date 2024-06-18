@@ -1,10 +1,11 @@
 package com.forestier.backend.services;
 
 import com.forestier.backend.dto.authentication.LoginResponse;
-import com.forestier.backend.dto.models.UserDto;
+import com.forestier.backend.dto.UserDto;
 import com.forestier.backend.helper.JwtHelper;
 import com.forestier.backend.dto.authentication.LoginRequest;
 import com.forestier.backend.dto.authentication.SignupRequest;
+import com.forestier.backend.helper.ModelConversionHelper;
 import com.forestier.backend.models.User;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class AuthenticationService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private ModelConversionHelper modelConversionHelper;
+
     @Transactional
     public User signup(SignupRequest dto) {
         if(!Objects.equals(dto.getPassword(), dto.getConfirmPassword())) {
@@ -48,7 +52,7 @@ public class AuthenticationService {
     public LoginResponse login(LoginRequest dto) {
         var auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
         if(auth.isAuthenticated()) {
-            UserDto userDto = userService.convertToDto(userService.getUserByEmail(dto.getEmail()));
+            UserDto userDto = modelConversionHelper.toUserDto(userService.getUserByEmail(dto.getEmail()));
             String token = JwtHelper.generateToken(userDto);
             return new LoginResponse(userDto, token);
         }

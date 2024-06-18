@@ -2,7 +2,6 @@ import {Collaborator} from "@/models/Collaborator";
 import axios from "axios";
 import {url} from "@/api/requests/url";
 import {Project} from "@/models/Project";
-import {User} from "@/models/User";
 
 export const newCollaborator = async (email: string, project: Project, token: string) => {
     return axios({

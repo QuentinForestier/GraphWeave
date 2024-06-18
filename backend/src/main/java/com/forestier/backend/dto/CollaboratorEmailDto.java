@@ -1,4 +1,4 @@
-package com.forestier.backend.dto.models;
+package com.forestier.backend.dto;
 
 import lombok.Getter;
 import lombok.Setter;

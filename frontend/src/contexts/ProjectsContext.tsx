@@ -90,7 +90,7 @@ const ProjectsProvider = ({children}: { children: React.ReactNode }) => {
     useEffect(() => {
         if (token)
             refreshProjects();
-    }, [])
+    }, [token])
 
     return (
         <ProjectsContext.Provider value={{
