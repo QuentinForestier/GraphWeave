@@ -1,6 +1,6 @@
 package com.forestier.backend.services;
 
-import com.forestier.backend.dto.models.UserDto;
+import com.forestier.backend.dto.UserDto;
 import com.forestier.backend.models.User;
 import com.forestier.backend.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -38,7 +38,5 @@ public class UserService {
         return userRepository.findById(id).orElseThrow();
     }
 
-    public UserDto convertToDto(User user) {
-        return modelMapper.map(user, UserDto.class);
-    }
+
 }

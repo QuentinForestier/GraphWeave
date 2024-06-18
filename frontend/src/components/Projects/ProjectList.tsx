@@ -42,10 +42,10 @@ export function ProjectList(props: ProjectListProps) {
                 </Drawer.Header>
                 <Drawer.Body>
                     <SearchAddInput placeholder={"Search or create a project"}
-                                    onAddClick={() => {
+                                    onButtonClick={() => {
                                         openProjectModals(filterInput);
                                     }}
-                                    onChange={(event) => {
+                                    onInputChange={(event) => {
                                         setFilterInput(event.currentTarget.value);
                                     }}
                     />

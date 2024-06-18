@@ -56,10 +56,14 @@ public class ProjectService {
     }
 
     public Project getProject(UUID projectId, User user) {
-        Collaborator c = collaboratorService.getCollaborator(projectId, user.getId());
-        if (c == null)
-            throw new IllegalArgumentException("User is not a collaborator of the project");
-        return c.getProject();
+
+        // Get project from repository
+        Project project = projectRepository.findById(projectId).
+                orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        // Check if user is a collaborator
+        project.getCollaborators().stream().filter(c -> c.getUser().getId().equals(user.getId())).
+                findFirst().orElseThrow(() -> new IllegalArgumentException("User is not a collaborator of the project"));
+        return project;
     }
 
     private Project createNewProject(Project project, User user) {

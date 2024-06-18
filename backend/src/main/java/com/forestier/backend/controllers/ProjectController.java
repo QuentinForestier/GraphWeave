@@ -1,18 +1,14 @@
 package com.forestier.backend.controllers;
 
-import com.forestier.backend.dto.ChatMessage;
-import com.forestier.backend.dto.models.ProjectDto;
+import com.forestier.backend.dto.ProjectDto;
 import com.forestier.backend.helper.JwtHelper;
+import com.forestier.backend.helper.ModelConversionHelper;
 import com.forestier.backend.models.Project;
-import com.forestier.backend.models.User;
 import com.forestier.backend.services.ProjectService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,17 +19,17 @@ public class ProjectController {
     private ProjectService projectService;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private ModelConversionHelper modelConversionHelper;
 
     @GetMapping("{projectId}")
     public ProjectDto getProject(@PathVariable UUID projectId, @RequestHeader("Authorization") String token) {
-        return convertToDto(projectService.getProject(projectId, JwtHelper.getUserFromToken(token)));
+        return modelConversionHelper.toProjectDto(projectService.getProject(projectId, JwtHelper.getUserFromToken(token)));
     }
 
     @GetMapping("")
     public List<ProjectDto> getProjects(@RequestHeader("Authorization") String token) {
         try {
-            return projectService.allProjectsFromUser(JwtHelper.getUserFromToken(token)).stream().map(this::convertToDto).toList();
+            return projectService.allProjectsFromUser(JwtHelper.getUserFromToken(token)).stream().map(modelConversionHelper::toProjectDto).toList();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new IllegalArgumentException("Invalid token");
@@ -43,8 +39,8 @@ public class ProjectController {
 
     @PostMapping("")
     public ProjectDto createProject(@RequestBody ProjectDto dto, @RequestHeader("Authorization") String token) {
-        Project project = convertToEntity(dto);
-        return convertToDto(projectService.saveProject(project, JwtHelper.getUserFromToken(token)));
+        Project project = modelConversionHelper.toProject(dto);
+        return modelConversionHelper.toProjectDto(projectService.saveProject(project, JwtHelper.getUserFromToken(token)));
     }
 
     @DeleteMapping("{projectId}")
@@ -57,19 +53,11 @@ public class ProjectController {
     public ProjectDto updateProject(@RequestBody ProjectDto dto, @RequestHeader("Authorization") String token) {
         if (dto.getId() == null)
             throw new IllegalArgumentException("Project id is required");
-        Project project = convertToEntity(dto);
+        Project project = modelConversionHelper.toProject(dto);
 
-        return convertToDto(projectService.saveProject(project, JwtHelper.getUserFromToken(token)));
+        return modelConversionHelper.toProjectDto(projectService.saveProject(project, JwtHelper.getUserFromToken(token)));
     }
 
-    private ProjectDto convertToDto(Project project) {
-        return modelMapper.map(project, ProjectDto.class);
-    }
 
-    private Project convertToEntity(ProjectDto dto) {
-        //TODO: Do something when id already exists
-
-        return modelMapper.map(dto, Project.class);
-    }
 
 }

@@ -34,16 +34,14 @@ export function CollaboratorList(props: CollaboratorListProps) {
             <Title order={5}>Collaborators</Title>
             <SearchAddInput
                 value={filterInput}
-                onChange={(event) => {
+                onInputChange={(event) => {
                     setFilterInput(event.currentTarget.value);
                 }}
-                onAddClick={() => {
+                onButtonClick={() => {
                     addCollaborator(filterInput, props.project).then((collaborator: Collaborator) => {
                         setFilterInput("");
                         // add collaborator to list using setCollaborator
-                        let tmp = collaborators;
-                        tmp.push(collaborator);
-                        setCollaborators(tmp);
+                        setCollaborators(prevState => [...prevState, collaborator]);
                     })
                 }}
                 placeholder="Search or add a collaborator"/>

@@ -1,4 +1,4 @@
-package com.forestier.backend.dto.models;
+package com.forestier.backend.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
