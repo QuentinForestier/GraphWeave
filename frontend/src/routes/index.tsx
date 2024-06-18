@@ -6,6 +6,7 @@ import {useAuth} from "@/hooks/useAuth";
 import {Editor} from "@/components/Editor/Editor";
 import {AppProvider} from "@/contexts/AppContext";
 
+
 type RoutesType = {
     toggle: () => void
 }
@@ -24,8 +25,8 @@ const Routes = ({toggle}: RoutesType) => {
             element: <HomePage toggle={toggle}/>,
         },
         {
-            path: "/editor",
-            element: <Editor/>
+            path: '/editor',
+            element: <Editor />
         }
     ];
 
