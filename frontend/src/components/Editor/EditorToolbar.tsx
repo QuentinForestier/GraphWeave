@@ -23,13 +23,13 @@ export function EditorToolbar() {
         <Center>
             <Group style={{...customStyle}}>
                 <div
-                    onDragStart={(event) => onDragStart(event, "input")}
+                    onDragStart={(event) => onDragStart(event, "Class")}
                     draggable
                 >
                     <img src={ClassIcon} width={30}/>
                 </div>
                 <div
-                    onDragStart={(event) => onDragStart(event, "default")}
+                    onDragStart={(event) => onDragStart(event, "Enum")}
                     draggable
                 >
                     Default Node

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useCallback} from 'react';
+import React, {useState, useRef, useCallback, useMemo, useEffect} from 'react';
 import ReactFlow, {
     ReactFlowProvider,
     addEdge,
@@ -6,27 +6,57 @@ import ReactFlow, {
     useEdgesState,
     Controls,
     Background,
+    SelectionMode, Panel,
+    NodeChange
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 import {EditorToolbar} from "./EditorToolbar";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
+import {useApp} from "@/hooks/useApp";
+import {ClassNode, EnumNode} from "@/components/Editor/Uml/EntityNodes";
+import {IMessage} from "@stomp/stompjs";
+import {ChatMessage} from "@/models/ChatMessage";
+import {Entity} from "@/models/uml/Entity";
 
-
-const initialNodes = [
-    {
-        id: '1',
-        type: 'input',
-        data: {label: 'input node'},
-        position: {x: 250, y: 5},
-    },
-];
 
 export function Editor() {
     const reactFlowWrapper = useRef(null);
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+    const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
+
+    const nodeTypes = useMemo(() => ({Class: ClassNode, Enum:EnumNode}), [])
+
+    const {loading, addEntity, subscribeToEntityCreation} = useApp();
+
+    const customOnNodesChange = (changes: NodeChange[]) => {
+        onNodesChange(changes);
+    }
+
+    useEffect(() => {
+        if (!loading) {
+            subscribeToEntityCreation((message: IMessage) => {
+                let entity: Entity = JSON.parse(message.body);
+                const newNode = {
+                    id: entity.id,
+                    type: entity.type,
+                    position: {x: entity.graphics?.x, y: entity.graphics?.y},
+                    data: entity,
+                    style: {
+                        background: '#fff7e1',
+                        fontSize: 12,
+                        border: '1px solid black',
+                        fontColor: 'black',
+                        width: entity.graphics?.width,
+                    },
+
+                };
+
+                setNodes((nds) => nds.concat(newNode));
+            })
+        }
+    }, [loading])
 
     const onConnect = useCallback(
         (params) => setEdges((eds) => addEdge(params, eds)),
@@ -48,43 +78,46 @@ export function Editor() {
             if (typeof type === 'undefined' || !type) {
                 return;
             }
-
-            const wrapperBounds = reactFlowWrapper.current.getBoundingClientRect();
             const position = reactFlowInstance.screenToFlowPosition({
-                x: event.clientX - wrapperBounds.left,
-                y: event.clientY - wrapperBounds.top,
+                x: event.clientX,
+                y: event.clientY,
             });
 
-            const newNode = {
-                id: uuidv4(),
-                type,
-                position,
-                data: {label: `${type} node`},
-            };
 
-            setNodes((nds) => nds.concat(newNode));
+            addEntity({
+                name: type,
+                graphics: {
+                    width: 150,
+                    x: position.x,
+                    y: position.y,
+                }
+            }, type);
+
+
         },
         [reactFlowInstance],
     );
 
     return (
         <ReactFlowProvider>
-            <div ref={reactFlowWrapper} style={{ height: 600 }}>
+            <div ref={reactFlowWrapper} style={{height: '90vh'}}>
                 <ReactFlow
                     nodes={nodes}
                     edges={edges}
-                    onNodesChange={onNodesChange}
+                    onNodesChange={customOnNodesChange}
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
                     onInit={setReactFlowInstance}
+                    nodeTypes={nodeTypes}
                     onDrop={onDrop}
                     onDragOver={onDragOver}
+
                 >
-                    <Background />
-                    <Controls />
+                    <Background/>
+                    <Controls/>
                 </ReactFlow>
             </div>
-            <EditorToolbar />
+            <EditorToolbar/>
         </ReactFlowProvider>
     );
 };

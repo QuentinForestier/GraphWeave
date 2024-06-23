@@ -4,9 +4,16 @@ import React from "react";
 export function Attribute() {
     return (
         <>
-            <TextInput
-                variant="unstyled"
-
+            <input type={"text"}
+                   style={{
+                       paddingLeft:'0.3rem',
+                       width:'100%',
+                       border:"none",
+                       outline:"none",
+                       background:"none",
+                       color:"black",
+                       textOverflow:'ellipsis'
+                   }}
             />
         </>
     );

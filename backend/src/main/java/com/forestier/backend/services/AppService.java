@@ -42,6 +42,12 @@ public class AppService {
     @Autowired
     private ProjectService projectService;
 
+
+    private static final String createEntityTopic = "/topic/projectId/create/entity";
+    private static final String updateEntityTopic = "/topic/projectId/update/entity";
+    private static final String deleteEntityTopic = "/topic/projectId/delete/entity";
+    private static final String chatTopic = "/topic/projectId/chat";
+
     private final ArrayList<Project> projects = new ArrayList<>();
 
     public void handleChatMessage(ChatMessage message, String projectId, String token) {
@@ -49,54 +55,53 @@ public class AppService {
         message.setAuthor(u.getUsername());
         message.setDate(new SimpleDateFormat("HH:mm").format(new Date()));
         ChatMessageCommand command = new ChatMessageCommand(message);
-        handleCommand(command, projectId, token);
+        handleCommand(command, projectId, token, chatTopic.replace("projectId", projectId));
     }
 
     public void handleCreateEntity(JsonNode dto, String entityType, String projectId, String token) throws JsonProcessingException {
         Command command = switch (entityType) {
-            case "class" ->
-                    newEntityCommand(CreateEntityCommand.class, Class.class, JsonHelper.deserialize(dto, ClassDto.class));
-            case "enum" ->
-                    newEntityCommand(CreateEntityCommand.class, Enum.class, JsonHelper.deserialize(dto, EnumDto.class));
+            case "Class" ->
+                    newEntityCommand(CreateEntityCommand.class, JsonHelper.deserialize(dto, ClassDto.class));
+            case "Enum" ->
+                    newEntityCommand(CreateEntityCommand.class, JsonHelper.deserialize(dto, EnumDto.class));
             default -> throw new IllegalArgumentException("Invalid entity type");
         };
 
-        handleCommand(command, projectId, token);
+        handleCommand(command, projectId, token, createEntityTopic.replace("projectId", projectId));
     }
 
     public void handleUpdateEntity(JsonNode dto, String entityType, String projectId, String token) throws JsonProcessingException {
         Command command = switch (entityType) {
-            case "class" ->
-                    newEntityCommand(UpdateEntityCommand.class, Class.class, JsonHelper.deserialize(dto, ClassDto.class));
-            case "enum" ->
-                    newEntityCommand(UpdateEntityCommand.class, Enum.class, JsonHelper.deserialize(dto, EnumDto.class));
+            case "Class" ->
+                    newEntityCommand(UpdateEntityCommand.class,  JsonHelper.deserialize(dto, ClassDto.class));
+            case "Enum" ->
+                    newEntityCommand(UpdateEntityCommand.class,  JsonHelper.deserialize(dto, EnumDto.class));
             default -> throw new IllegalArgumentException("Invalid entity type");
         };
 
-        handleCommand(command, projectId, token);
+        handleCommand(command, projectId, token, updateEntityTopic.replace("projectId", projectId));
     }
 
     public void handleDeleteEntity(JsonNode dto, String entityType, String projectId, String token) throws JsonProcessingException {
         Command command = switch (entityType) {
-            case "class" ->
-                    newEntityCommand(DeleteEntityCommand.class, Class.class, JsonHelper.deserialize(dto, ClassDto.class));
-            case "enum" ->
-                    newEntityCommand(DeleteEntityCommand.class, Enum.class, JsonHelper.deserialize(dto, EnumDto.class));
+            case "Class" ->
+                    newEntityCommand(DeleteEntityCommand.class, JsonHelper.deserialize(dto, ClassDto.class));
+            case "Enum" ->
+                    newEntityCommand(DeleteEntityCommand.class, JsonHelper.deserialize(dto, EnumDto.class));
             default -> throw new IllegalArgumentException("Invalid entity type");
         };
 
-        handleCommand(command, projectId, token);
+        handleCommand(command, projectId, token, deleteEntityTopic.replace("projectId", projectId));
     }
 
-    private void handleCommand(Command command, String projectId, String token, String... users) {
+    private void handleCommand(Command command, String projectId, String token, String topic, String... users) {
         User u = JwtHelper.getUserFromToken(token);
         Project project = getOrLoadProject(projectId, u);
         if (command.requireEditPermission() && !checkEditPermission(project, u)) {
             return;
         }
-        ArrayNode json = command.execute(project);
+        JsonNode json = command.execute(project);
 
-        String topic = ResponseCommandHelper.consumeTopic(json, projectId);
         if (users.length > 0) {
             for (String user : users) {
                 sendToUser(user, json, topic);
@@ -106,7 +111,7 @@ public class AppService {
         }
     }
 
-    private <T, U extends Entity> Command newEntityCommand(java.lang.Class<T> commandClass, java.lang.Class<U> entityType, EntityDto dto) {
+    private <T, U extends Entity> Command newEntityCommand(java.lang.Class<T> commandClass, EntityDto dto) {
         try {
             Entity e = EntityConversionHelper.convertToEntity(dto);
 
@@ -121,11 +126,15 @@ public class AppService {
     private Project getOrLoadProject(String projectId, User user) {
 
         UUID projectUuid = UUID.fromString(projectId);
-        for (Project p : projects) {
-            if (p.getId().equals(projectUuid)) {
-                return p;
-            }
+
+        Project alreadyLoaded = projects.stream().filter(p -> p.getId().equals(projectUuid)).findFirst().orElse(null);
+        if (alreadyLoaded != null) {
+            alreadyLoaded.getCollaborators().stream().filter(c -> c.getUser().getId().equals(user.getId())).
+                    findFirst().orElseThrow(() -> new IllegalArgumentException("User is not a collaborator of the project"));
+            return alreadyLoaded;
         }
+
+
         Project p = projectService.getProject(projectUuid, user);
         projects.add(p);
         p.setDiagram(new ClassDiagram());
@@ -138,12 +147,12 @@ public class AppService {
     }
 
 
-    private void sendToUser(String user, ArrayNode json, String topic) {
+    private void sendToUser(String user, JsonNode json, String topic) {
         simpMessagingTemplate.convertAndSendToUser(user, topic, json);
     }
 
 
-    private void send(ArrayNode json, String topic) {
+    private void send(JsonNode json, String topic) {
         simpMessagingTemplate.convertAndSend(topic, json);
     }
 }

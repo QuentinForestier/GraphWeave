@@ -9,18 +9,37 @@ type EntityHeaderProps = {
 export function EntityHeader(props: EntityHeaderProps) {
     return (
         <>
-            {props.tags && <Center>{"<< " + props.tags + " >>"}</Center>}
+            {props.tags && <input type={"text"}
+                                  readOnly={true}
+                                  value={"<< " + props.tags + " >>"}
+                                  style={{
+                                      textOverflow: 'ellipsis',
+                                      width: "100%",
+                                      margin: 'auto',
+                                      padding: "0",
+                                      textAlign: 'center',
+                                      border: "none",
+                                      outline: "none",
+                                      background: "none",
+                                      color: "black",
 
-            <TextInput
-                value={props.name}
-                variant="unstyled"
-                styles={{
-                    input: {
-                        fontSize:'1rem',
-                        textAlign: 'center',
-                        fontWeight: 'bold'
-                    }
-                }}/>
+                                  }}></input>}
+
+            <input type={"text"}
+
+                   style={{
+                       textOverflow: 'ellipsis',
+                       width: "100%",
+                       margin: 'auto',
+                       textAlign: 'center',
+                       fontWeight: 'bold',
+                       fontSize: '0.8rem',
+                       border: "none",
+                       outline: "none",
+                       background: "none",
+                       color: "black",
+                   }}/>
         </>
-    );
+    )
+        ;
 }

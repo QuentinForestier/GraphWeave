@@ -19,7 +19,6 @@ public class CollaboratorService {
     @Autowired
     private UserService  userService;
 
-
     @Autowired
     private CollaboratorRepository collaboratorRepository;
 

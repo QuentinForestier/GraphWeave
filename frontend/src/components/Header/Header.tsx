@@ -1,19 +1,17 @@
 import {
     AspectRatio,
     Burger,
-    Group, Image, Modal,
+    Group, Image,
     Title,
     UnstyledButton,
-    useMantineTheme
 } from "@mantine/core";
-import {useDisclosure} from "@mantine/hooks";
 import graphWeaveLogo from '../../logo.svg'
-import {AuthModal} from "@/components/Authentication/AuthModal";
 import {ColorSchemeToggle} from "@/components/ColorSchemeToggle/ColorSchemeToggle";
 import {AuthButton} from "@/components/Authentication/AuthButton";
-import {MouseEventHandler} from "react";
-import {modals} from "@mantine/modals";
+import {MouseEventHandler, useEffect} from "react";
 import {useAuth} from "@/hooks/useAuth";
+import {useLocation} from "react-router-dom";
+import {openAuthModals} from "@/helpers/ModalsHelper";
 
 interface HeaderProps {
     onAsideToggle?: MouseEventHandler<HTMLButtonElement>
@@ -41,10 +39,12 @@ export function Header(props: HeaderProps) {
 
                 <Group pr={"xs"} mah={"var(--app-shell-header-height, px)"} h="100%">
 
-                    <Title hidden={authenticatedUser === null} visibleFrom={"md"} order={4}>Hello, {authenticatedUser?.username} !</Title>
+                    <Title hidden={authenticatedUser === null} visibleFrom={"md"}
+                           order={4}>Hello, {authenticatedUser?.username} !</Title>
                     <ColorSchemeToggle/>
-                    <AuthButton />
-                    <Burger hidden={authenticatedUser === null} opened={props.openedAside} onClick={props.onAsideToggle}/>
+                    <AuthButton/>
+                    <Burger hidden={authenticatedUser === null} opened={props.openedAside}
+                            onClick={props.onAsideToggle}/>
                 </Group>
             </Group>
         </>

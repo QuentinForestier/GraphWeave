@@ -1,5 +1,6 @@
 package com.forestier.backend.commands.entities;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.forestier.backend.models.Project;
 import com.forestier.backend.models.uml.entities.Entity;
@@ -12,19 +13,19 @@ public class DeleteEntityCommand<T extends Entity> extends EntityCommand<T> {
     }
 
     @Override
-    public ArrayNode execute(Project project) {
+    public JsonNode execute(Project project) {
         delete(project);
         return null;
     }
 
     @Override
-    public ArrayNode undo(Project project) {
+    public JsonNode undo(Project project) {
         create(project);
         return null;
     }
 
     @Override
-    public ArrayNode redo(Project project) {
+    public JsonNode redo(Project project) {
         delete(project);
         return null;
     }

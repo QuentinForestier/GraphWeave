@@ -29,28 +29,24 @@ export function Chat() {
 
     const [inputValue, setInputValue] = useState("");
 
-    const {subscribeToChat, sendChatMessage} = useApp();
+    const {subscribeToChat, sendChatMessage, loading} = useApp();
 
     const [indicatorVisible, setIndicatorVisible] = useState<boolean>(false);
 
 
     useEffect(() => {
-        const timeoutId = setTimeout(() => {
+        if (!loading) {
             subscribeToChat((message: IMessage) => {
-                let chatmessage: ChatMessage = JSON.parse(message.body)[0];
-                setMessages(prev => [...prev, chatmessage]);
+                setMessages(prev => [...prev, JSON.parse(message.body)]);
                 setInputValue("");
                 setIndicatorVisible(true)
             })
-        }, 100)
-
-
-        return () => clearTimeout(timeoutId);
-    }, [])
+        }
+    }, [loading])
 
     return <>
 
-        <Affix hidden={opened}  position={{bottom:40, right:40}}>
+        <Affix hidden={opened} position={{bottom: 40, right: 40}}>
             <Indicator disabled={!indicatorVisible}>
                 <ActionIcon radius={"xl"} size={"xl"} onClick={() => {
                     open();
@@ -61,7 +57,7 @@ export function Chat() {
 
         <Dialog withBorder shadow={"sm"}
                 transitionProps={{
-                    transition:'pop-bottom-right'
+                    transition: 'pop-bottom-right'
                 }}
                 opened={opened} withCloseButton onClose={() => {
             close();
@@ -91,7 +87,7 @@ export function Chat() {
                                 })
                             }}
                             size={"lg"}
-                             variant="filled">
+                            variant="filled">
                             <IconSend style={{width: rem(18), height: rem(18)}} stroke={1.5}/>
                         </ActionIcon>
                     }

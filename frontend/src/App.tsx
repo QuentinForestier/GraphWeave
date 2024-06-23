@@ -34,15 +34,15 @@ export default function App() {
                         <Notifications/>
                         <ProjectList opened={opened} toggle={toggle}/>
                         <AppShell
-                            padding={{base: 10, sm: 15, lg: 'xl'}}
                             header={
                                 {height: {base: 65, sm: 78, lg: 90}}}
+
                         >
                             <AppShell.Header
                                 withBorder={false}>
                                 <Header openedAside={opened} onAsideToggle={toggle}/>
                             </AppShell.Header>
-                            <AppShell.Main>
+                            <AppShell.Main >
                                 <Routes toggle={toggle}/>
                             </AppShell.Main>
                         </AppShell>

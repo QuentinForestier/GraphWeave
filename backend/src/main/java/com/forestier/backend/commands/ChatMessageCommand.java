@@ -1,5 +1,6 @@
 package com.forestier.backend.commands;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.forestier.backend.helper.ResponseCommandHelper;
 import com.forestier.backend.models.ChatMessage;
@@ -13,17 +14,17 @@ public class ChatMessageCommand implements Command{
     }
 
     @Override
-    public ArrayNode execute(Project project) {
+    public JsonNode execute(Project project) {
         return ResponseCommandHelper.createChatMessageResponse(chatMessage);
     }
 
     @Override
-    public ArrayNode undo(Project project) {
+    public JsonNode undo(Project project) {
         return null;
     }
 
     @Override
-    public ArrayNode redo(Project project) {
+    public JsonNode redo(Project project) {
         return null;
     }
 

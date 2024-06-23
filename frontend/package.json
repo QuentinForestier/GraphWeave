@@ -24,6 +24,7 @@
     "@mantine/hooks": "^7.10.0",
     "@mantine/modals": "^7.10.0",
     "@mantine/notifications": "^7.10.0",
+    "@reactflow/node-resizer": "^2.2.14",
     "@stomp/stompjs": "^7.0.0",
     "@tabler/core": "1.0.0-beta20",
     "@tabler/icons-react": "^3.5.0",

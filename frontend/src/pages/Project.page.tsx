@@ -1,18 +1,15 @@
-import {Button, Dialog, Group, TextInput, Text} from '@mantine/core';
 import {useApp} from "@/hooks/useApp";
-import {useDisclosure} from "@mantine/hooks";
 import {Chat} from "@/components/Chat/Chat";
+import {Editor} from "@/components/Editor/Editor";
+import {Box, Container} from "@mantine/core";
 
 
 export function ProjectPage() {
 
-    const {addEntity} = useApp();
-
-
-
     return (
         <>
-           <Chat/>
+            <Chat/>
+            <Editor/>
         </>
     );
 }

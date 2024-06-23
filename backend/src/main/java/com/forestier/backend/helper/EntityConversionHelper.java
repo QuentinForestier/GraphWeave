@@ -6,6 +6,7 @@ import com.forestier.backend.dto.uml.entities.EnumDto;
 import com.forestier.backend.dto.uml.entities.InterfaceDto;
 import com.forestier.backend.models.uml.entities.Class;
 import com.forestier.backend.models.uml.entities.Entity;
+import com.forestier.backend.models.uml.entities.Enum;
 import com.forestier.backend.models.uml.entities.Interface;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.record.RecordModule;

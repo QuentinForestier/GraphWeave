@@ -1,5 +1,6 @@
 package com.forestier.backend.commands.entities;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.forestier.backend.helper.JsonHelper;
 import com.forestier.backend.models.Project;
@@ -14,7 +15,7 @@ public class UpdateEntityCommand<T extends Entity> extends EntityCommand<T> {
     }
 
     @Override
-    public ArrayNode execute(Project project) {
+    public JsonNode execute(Project project) {
         try {
             oldEntity = (T) JsonHelper.deserialize(JsonHelper.serialize(project.getDiagram().getEntity(entity.getId())), entity.getClass());
         } catch (Exception e) {
@@ -24,7 +25,7 @@ public class UpdateEntityCommand<T extends Entity> extends EntityCommand<T> {
     }
 
     @Override
-    public ArrayNode undo(Project project) {
+    public JsonNode undo(Project project) {
         T tmp = entity;
         entity = oldEntity;
         oldEntity = tmp;
@@ -32,7 +33,7 @@ public class UpdateEntityCommand<T extends Entity> extends EntityCommand<T> {
     }
 
     @Override
-    public ArrayNode redo(Project project) {
+    public JsonNode redo(Project project) {
         T tmp = entity;
         entity = oldEntity;
         oldEntity = tmp;

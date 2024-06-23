@@ -1,11 +1,15 @@
 package com.forestier.backend.models.uml.graphics;
 
-import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Builder
+@Getter
+@Setter
+@NoArgsConstructor
 public class GraphicalNode {
-    private int x;
-    private int y;
-    private int width;
-    private int height;
+    private Integer x;
+    private Integer y;
+    private Integer width;
+    private Integer height;
 }

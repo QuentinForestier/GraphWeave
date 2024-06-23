@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Getter
 public class ClassDiagram {
@@ -15,6 +16,8 @@ public class ClassDiagram {
     private final ArrayList<Entity> entities = new ArrayList<>();
 
     public void addEntity(Entity entity) {
+        if(entity.getId() == null)
+            entity.setId(UUID.randomUUID().toString());
         entities.add(entity);
     }
 

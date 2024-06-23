@@ -23,10 +23,6 @@ const Routes = ({toggle}: RoutesType) => {
         {
             path: "/login",
             element: <HomePage toggle={toggle}/>,
-        },
-        {
-            path: '/editor',
-            element: <Editor />
         }
     ];
 
