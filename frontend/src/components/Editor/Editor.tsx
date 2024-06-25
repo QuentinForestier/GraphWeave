@@ -7,17 +7,15 @@ import ReactFlow, {
     Controls,
     Background,
     SelectionMode, Panel,
-    NodeChange
+    NodeChange, MiniMap
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 import {EditorToolbar} from "./EditorToolbar";
-import {v4 as uuidv4} from 'uuid';
 import {useApp} from "@/hooks/useApp";
 import {ClassNode, EnumNode} from "@/components/Editor/Uml/EntityNodes";
 import {IMessage} from "@stomp/stompjs";
-import {ChatMessage} from "@/models/ChatMessage";
-import {Entity} from "@/models/uml/Entity";
+import {createNode, deleteNode, onNodesDelete, onNodesUpdate, updateNode} from "@/api/uml";
 
 
 export function Editor() {
@@ -26,35 +24,39 @@ export function Editor() {
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-    const nodeTypes = useMemo(() => ({Class: ClassNode, Enum:EnumNode}), [])
+    const nodeTypes = useMemo(() => ({Class: ClassNode, Enum: EnumNode}), [])
 
-    const {loading, addEntity, subscribeToEntityCreation} = useApp();
+    const {
+        loading,
+        addEntity,
+        updateEntity,
+        removeEntity,
+        subscribeToEntityCreation,
+        subscribeToEntityUpdate,
+        subscribeToEntityDeletion,
+    } = useApp();
+
+
+    const onNodesDelete = (nodes: Node[]) => {
+        nodes.map(n => removeEntity({
+            id: n.id,
+        }, n.type));
+    }
 
     const customOnNodesChange = (changes: NodeChange[]) => {
+        changes.map((change) => {
+            const node = nodes.filter(n => n.id === change!.id)[0];
+            const dto = onNodesUpdate(change, node);
+            updateEntity(dto, node.type);
+        });
         onNodesChange(changes);
     }
 
     useEffect(() => {
         if (!loading) {
-            subscribeToEntityCreation((message: IMessage) => {
-                let entity: Entity = JSON.parse(message.body);
-                const newNode = {
-                    id: entity.id,
-                    type: entity.type,
-                    position: {x: entity.graphics?.x, y: entity.graphics?.y},
-                    data: entity,
-                    style: {
-                        background: '#fff7e1',
-                        fontSize: 12,
-                        border: '1px solid black',
-                        fontColor: 'black',
-                        width: entity.graphics?.width,
-                    },
-
-                };
-
-                setNodes((nds) => nds.concat(newNode));
-            })
+            subscribeToEntityCreation((message: IMessage) => createNode(message, setNodes));
+            subscribeToEntityUpdate((message: IMessage) => updateNode(message, setNodes));
+            subscribeToEntityDeletion((message: IMessage) => deleteNode(message, setNodes));
         }
     }, [loading])
 
@@ -111,10 +113,11 @@ export function Editor() {
                     nodeTypes={nodeTypes}
                     onDrop={onDrop}
                     onDragOver={onDragOver}
-
+                    onNodesDelete={onNodesDelete}
                 >
                     <Background/>
                     <Controls/>
+                    <MiniMap/>
                 </ReactFlow>
             </div>
             <EditorToolbar/>

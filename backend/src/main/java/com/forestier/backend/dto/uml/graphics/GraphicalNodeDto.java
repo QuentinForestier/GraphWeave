@@ -6,8 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GraphicalNodeDto {
-    private int x;
-    private int y;
-    private int width;
-    private int height;
+    private Integer x;
+    private Integer y;
+    private Integer width;
+    private Integer height;
 }

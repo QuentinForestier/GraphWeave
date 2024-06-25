@@ -2,7 +2,6 @@ package com.forestier.backend.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.forestier.backend.commands.ChatMessageCommand;
 import com.forestier.backend.commands.Command;
 import com.forestier.backend.commands.entities.CreateEntityCommand;
@@ -14,14 +13,11 @@ import com.forestier.backend.dto.uml.entities.EnumDto;
 import com.forestier.backend.helper.EntityConversionHelper;
 import com.forestier.backend.helper.JsonHelper;
 import com.forestier.backend.helper.JwtHelper;
-import com.forestier.backend.helper.ResponseCommandHelper;
 import com.forestier.backend.models.ChatMessage;
 import com.forestier.backend.models.Project;
 import com.forestier.backend.models.User;
 import com.forestier.backend.models.uml.ClassDiagram;
-import com.forestier.backend.models.uml.entities.Class;
 import com.forestier.backend.models.uml.entities.Entity;
-import com.forestier.backend.models.uml.entities.Enum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -31,7 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 
 @Service
 public class AppService {
@@ -111,7 +106,7 @@ public class AppService {
         }
     }
 
-    private <T, U extends Entity> Command newEntityCommand(java.lang.Class<T> commandClass, EntityDto dto) {
+    private <T> Command newEntityCommand(java.lang.Class<T> commandClass, EntityDto dto) {
         try {
             Entity e = EntityConversionHelper.convertToEntity(dto);
 

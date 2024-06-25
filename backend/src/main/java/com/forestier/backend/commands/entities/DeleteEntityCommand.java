@@ -14,20 +14,17 @@ public class DeleteEntityCommand<T extends Entity> extends EntityCommand<T> {
 
     @Override
     public JsonNode execute(Project project) {
-        delete(project);
-        return null;
+        return delete(project);
     }
 
     @Override
     public JsonNode undo(Project project) {
-        create(project);
-        return null;
+        return create(project);
     }
 
     @Override
     public JsonNode redo(Project project) {
-        delete(project);
-        return null;
+        return delete(project);
     }
 
 
